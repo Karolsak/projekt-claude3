@@ -8,13 +8,13 @@ import numpy as np
 class PowerPlant:
     """Represents a power plant with cost characteristics"""
 
-    def __init__(self, a, b, c, name="Plant"):
+    def __init__(self, a, b, c, name="Plant", Pmin=0, Pmax=100):
         self.a = a  # Quadratic coefficient
         self.b = b  # Linear coefficient
         self.c = c  # Constant
         self.name = name
-        self.Pmin = 0  # Minimum power generation (MW)
-        self.Pmax = 100  # Maximum power generation (MW)
+        self.Pmin = Pmin  # Minimum power generation (MW)
+        self.Pmax = Pmax  # Maximum power generation (MW)
 
     def cost(self, P):
         """Calculate total cost C = a*P^2 + b*P + c"""
@@ -27,6 +27,10 @@ class PowerPlant:
     def power_from_lambda(self, lam):
         """Calculate power generation from lambda (incremental cost)"""
         # lambda = 2*a*P + b  =>  P = (lambda - b) / (2*a)
+        if abs(self.a) < 1e-10:  # Handle linear case
+            # For linear incremental cost, lambda = b (constant)
+            # This shouldn't happen in normal economic dispatch
+            return self.Pmin
         return (lam - self.b) / (2 * self.a)
 
 
